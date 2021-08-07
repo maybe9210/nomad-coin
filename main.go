@@ -25,12 +25,21 @@ func printName() {
 }
 
 func main() {
-	fmt.Println("Welcome to Coin world")
-	result, ret_name := plus(2, 2, last_name)
-	fmt.Println(result, ret_name)
+	// fmt.Println("Welcome to Coin world")
+	// result, ret_name := plus(2, 2, last_name)
+	// fmt.Println(result, ret_name)
 
-	result_number := plusInRange(1, 3, 4, 2, 5, 23, 3, 4, 5, 54)
-	fmt.Println(result_number)
+	// result_number := plusInRange(1, 3, 4, 2, 5, 23, 3, 4, 5, 54)
+	// fmt.Println(result_number)
 
-	printName()
+	// printName()
+
+	x := 4040404040404041111
+	// fmt.Printf("%b", x)
+	// fmt.Printf("%o", x)
+	// fmt.Printf("%x", x)
+	// fmt.Printf("%U", x)
+
+	xAsBinary := fmt.Sprintf("%b\n", x)
+	fmt.Println(xAsBinary)
 }
