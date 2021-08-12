@@ -1,19 +1,19 @@
 package main
 
-import "fmt"
+import (
+	"crypto/sha256"
+	"fmt"
+)
 
-type person struct {
-	name string
-	age int
-}
-
-func (p person) sayHello() {
-	fmt.Printf("Hello! my name is %s and I'm %d\n", p.name, p.age)
+type block struct {
+	data     string
+	hash     string
+	prevHash string
 }
 
 func main() {
-	hulo := person{age: 12, name: "hulo"}
-	hulo2 := person{"hulo2", 13}
-	hulo.sayHello()
-	hulo2.sayHello()
+	genesisBlock := block{"Genesis Block", "", ""}
+	hash := sha256.Sum256([]byte(genesisBlock.data + genesisBlock.prevHash))
+	genesisBlock.hash = fmt.Sprintf("%x", hash)
+	fmt.Println(genesisBlock.hash)
 }
