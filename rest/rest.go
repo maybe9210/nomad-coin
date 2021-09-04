@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/maybe9210/nomad-coin/blockchain"
@@ -50,7 +51,7 @@ func documentaion(rw http.ResponseWriter, r *http.Request) {
 			Payload:     "data:string",
 		},
 		{
-			URL:         URL("/blocks/{id]"),
+			URL:         URL("/blocks/{height}"),
 			Method:      "GET",
 			Description: "See A Block",
 		},
@@ -75,8 +76,10 @@ func blocks(rw http.ResponseWriter, r *http.Request) {
 
 func block(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id := vars["id"]
-	fmt.Printf("id => %s\n", id)
+	id, err := strconv.Atoi(vars["height"])
+	utils.HandleErr(err)
+	block := blockchain.GetBlockChain().GetBlock(id)
+	json.NewEncoder(rw).Encode(block)
 }
 
 func Start(aPort int) {
@@ -84,7 +87,7 @@ func Start(aPort int) {
 	port = fmt.Sprintf(":%d", aPort)
 	router.HandleFunc("/", documentaion).Methods("GET")
 	router.HandleFunc("/blocks", blocks).Methods("GET", "POST")
-	router.HandleFunc("/blocks/{id:[0-9]+}", block).Methods("GET")
+	router.HandleFunc("/blocks/{height:[0-9]+}", block).Methods("GET")
 	fmt.Printf("Listening on http://localhost%s\n", port)
 	log.Fatal(http.ListenAndServe(port, router))
 }
