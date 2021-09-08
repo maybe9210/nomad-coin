@@ -1,10 +1,9 @@
 package main
 
 import (
-	"github.com/maybe9210/nomad-coin/rest"
+	"github.com/maybe9210/nomad-coin/cli"
 )
 
 func main() {
-	// go explorer.Start(3000)
-	rest.Start(4000)
+	cli.Start()
 }
