@@ -1,4 +1,4 @@
-package block
+package blockchain
 
 import (
 	"bytes"
@@ -37,5 +37,6 @@ func createBlock(data string, prevHash string, height int) *Block {
 	}
 	payload := block.Data + block.PrevHash + fmt.Sprint(block.Height)
 	block.Hash = fmt.Sprintf("%x", sha256.Sum256([]byte(payload)))
+	block.persist()
 	return block
 }

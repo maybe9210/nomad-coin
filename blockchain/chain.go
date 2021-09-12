@@ -3,8 +3,8 @@ package blockchain
 import "sync"
 
 type blockchain struct {
-	NewestHash string `json:"newestHash`
-	Height     string `json:"height`
+	NewestHash string `json:"newestHash"`
+	Height     int    `json:"height"`
 }
 
 var b *blockchain
