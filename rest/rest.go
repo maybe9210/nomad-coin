@@ -8,6 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/maybe9210/nomad-coin/blockchain"
+	"github.com/maybe9210/nomad-coin/utils"
 )
 
 var port string
@@ -64,25 +65,17 @@ func documentaion(rw http.ResponseWriter, r *http.Request) {
 func blocks(rw http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		return
-		// json.NewEncoder(rw).Encode(blockchain.GetBlockChain().GetAllBlocks())
+		json.NewEncoder(rw).Encode(blockchain.Blockchain().Blocks())
 	case "POST":
-		return
-		/*
-			var addBlockBody AddBlockBody
-			utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
-			blockchain.GetBlockChain().AddBlock(addBlockBody.Message)
-			fmt.Printf("posted body.message: %s\n", addBlockBody.Message)
-			rw.WriteHeader(http.StatusCreated)
-		*/
+		var addBlockBody AddBlockBody
+		utils.HandleErr(json.NewDecoder(r.Body).Decode(&addBlockBody))
+		blockchain.Blockchain().AddBlock(addBlockBody.Message)
+		rw.WriteHeader(http.StatusCreated)
 	}
 }
 
 func block(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	// id, err := strconv.Atoi(vars["height"])
-	// utils.HandleErr(err)
-	// block, err := blockchain.GetBlockChain().GetBlock(id)
 	hash := vars["hash"]
 	block, err := blockchain.FindBlock(hash)
 	encoder := json.NewEncoder(rw)
