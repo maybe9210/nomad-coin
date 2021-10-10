@@ -31,6 +31,11 @@ type AddBlockBody struct {
 	Message string
 }
 
+type balanceResponse struct {
+	Address string `json:"address"`
+	Balance int    `json:"balance"`
+}
+
 type errorResponse struct {
 	ErrorMessage string `json:"errorMessage"`
 }
@@ -63,6 +68,11 @@ func documentaion(rw http.ResponseWriter, r *http.Request) {
 			Method:      "GET",
 			Description: "See A Block",
 		},
+		{
+			URL:         URL("/balance/{address}"),
+			Method:      "GET",
+			Description: "Get TxOuts for an Address",
+		},
 	}
 	utils.HandleErr(json.NewEncoder(rw).Encode(data))
 }
@@ -89,6 +99,19 @@ func block(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func balance(rw http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	address := vars["address"]
+	total := r.URL.Query().Get("total")
+	switch total {
+	case "true":
+		amount := blockchain.Blockchain().BalanceByAddress(address)
+		json.NewEncoder(rw).Encode(balanceResponse{address, amount})
+	default:
+		utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.Blockchain().TxOutsByAddress(address)))
+	}
+}
+
 func status(rw http.ResponseWriter, r *http.Request) {
 	utils.HandleErr(json.NewEncoder(rw).Encode(blockchain.Blockchain()))
 }
@@ -108,6 +131,7 @@ func Start(aPort int) {
 	router.HandleFunc("/status", status)
 	router.HandleFunc("/blocks", blocks).Methods("GET", "POST")
 	router.HandleFunc("/blocks/{hash:[a-f0-9]+}", block).Methods("GET")
+	router.HandleFunc("/balance/{address}", balance)
 	fmt.Printf("Listening on http://localhost%s\n", port)
 	log.Fatal(http.ListenAndServe(port, router))
 }
