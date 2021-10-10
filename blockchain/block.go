@@ -11,7 +11,6 @@ import (
 )
 
 type Block struct {
-	Data       string `json:"data"`
 	Hash       string `json:"hash"`
 	PrevHash   string `json:"prevHash,omitempty"`
 	Height     int    `json:"height"`
@@ -30,9 +29,8 @@ func (b *Block) restore(data []byte) {
 	utils.FromBytes(b, data)
 }
 
-func createBlock(data string, prevHash string, height int) *Block {
+func createBlock(prevHash string, height int) *Block {
 	block := &Block{
-		Data:       data,
 		Hash:       "",
 		PrevHash:   prevHash,
 		Height:     height,

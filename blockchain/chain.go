@@ -47,8 +47,8 @@ func (b *blockchain) Blocks() []*Block {
 	return blocks
 }
 
-func (b *blockchain) AddBlock(data string) {
-	block := createBlock(data, b.NewestHash, b.Height+1)
+func (b *blockchain) AddBlock() {
+	block := createBlock(b.NewestHash, b.Height+1)
 	b.NewestHash = block.Hash
 	b.Height = block.Height
 	b.CurrentDifficulty = block.Difficulty
@@ -86,7 +86,7 @@ func Blockchain() *blockchain {
 			b = &blockchain{Height: 0}
 			checkPoint := db.Checkpoint()
 			if checkPoint == nil {
-				b.AddBlock("Genesis")
+				b.AddBlock()
 			} else {
 				b.restore(checkPoint)
 			}
