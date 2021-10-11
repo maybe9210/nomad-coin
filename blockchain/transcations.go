@@ -1,6 +1,7 @@
 package blockchain
 
 import (
+	"errors"
 	"time"
 
 	"github.com/maybe9210/nomad-coin/utils"
@@ -16,6 +17,12 @@ type Tx struct {
 	TxIns     []*TxIn  `json:"txIns"`
 	TxOuts    []*TxOut `json:"txOuts"`
 }
+
+type mempool struct {
+	Txs []*Tx
+}
+
+var Mempool *mempool = &mempool{}
 
 func (t *Tx) getId() {
 	t.Id = utils.Hash(t)
@@ -46,4 +53,20 @@ func makeCoinbaseTx(address string) *Tx {
 	}
 	tx.getId()
 	return &tx
+}
+
+func makeTx(from, to string, amount int) (*Tx, error) {
+	if Blockchain().BalanceByAddress(from) < amount {
+		return nil, errors.New("not enough money")
+	}
+	return nil, nil
+}
+
+func (m *mempool) AddTx(to string, amount int) error {
+	tx, err := makeTx("nico", to, amount)
+	if err != nil {
+		return err
+	}
+	m.Txs = append(m.Txs, tx)
+	return nil
 }
