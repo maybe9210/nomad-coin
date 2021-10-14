@@ -1,7 +1,6 @@
 package blockchain
 
 import (
-	"errors"
 	"time"
 
 	"github.com/maybe9210/nomad-coin/utils"
@@ -12,7 +11,7 @@ const (
 )
 
 type Tx struct {
-	Id        string   `json:"id"`
+	ID        string   `json:"id"`
 	Timestamp int      `json:"timestamp"`
 	TxIns     []*TxIn  `json:"txIns"`
 	TxOuts    []*TxOut `json:"txOuts"`
@@ -25,12 +24,13 @@ type mempool struct {
 var Mempool *mempool = &mempool{}
 
 func (t *Tx) getId() {
-	t.Id = utils.Hash(t)
+	t.ID = utils.Hash(t)
 }
 
 type TxIn struct {
-	Owner  string `json:"owner"`
-	Amount int    `json:"amount"`
+	TxID  string `json:"txId"`
+	Index int    `json:"index"`
+	Owner string `json:"owner"`
 }
 
 type TxOut struct {
@@ -38,15 +38,21 @@ type TxOut struct {
 	Amount int    `json:"amount"`
 }
 
+type UTxOut struct {
+	TxID   string
+	Index  int
+	Amount int
+}
+
 func makeCoinbaseTx(address string) *Tx {
 	txIns := []*TxIn{
-		{"COINBASE", minerReward},
+		{"", -1, "COINBASE"},
 	}
 	txOuts := []*TxOut{
 		{address, minerReward},
 	}
 	tx := Tx{
-		Id:        "",
+		ID:        "",
 		Timestamp: int(time.Now().Unix()),
 		TxIns:     txIns,
 		TxOuts:    txOuts,
@@ -56,38 +62,7 @@ func makeCoinbaseTx(address string) *Tx {
 }
 
 func makeTx(from, to string, amount int) (*Tx, error) {
-	if Blockchain().BalanceByAddress(from) < amount {
-		return nil, errors.New("not enough money")
-	}
-
-	var txIns []*TxIn
-	var txOuts []*TxOut
-	total := 0
-	oldTxOuts := Blockchain().TxOutsByAddress(from)
-	for _, txOut := range oldTxOuts {
-		if total > amount {
-			break
-		}
-		txIn := &TxIn{txOut.Owner, txOut.Amount}
-		txIns = append(txIns, txIn)
-		total += txOut.Amount
-	}
-	change := total - amount
-	if change != 0 {
-		changeTxOut := &TxOut{from, change}
-		txOuts = append(txOuts, changeTxOut)
-	}
-
-	txOut := &TxOut{to, amount}
-	txOuts = append(txOuts, txOut)
-	tx := &Tx{
-		Id:        "",
-		Timestamp: int(time.Now().Unix()),
-		TxIns:     txIns,
-		TxOuts:    txOuts,
-	}
-	tx.getId()
-	return tx, nil
+	return nil, nil
 }
 
 func (m *mempool) AddTx(to string, amount int) error {
