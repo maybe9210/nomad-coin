@@ -7,5 +7,6 @@ import (
 func main() {
 	// defer db.Close()
 	// cli.Start()
-	wallet.Start()
+	// wallet.Start()
+	wallet.Wallet()
 }
