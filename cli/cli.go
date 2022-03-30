@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"runtime"
 
 	"github.com/maybe9210/nomad-coin/explorer"
 	"github.com/maybe9210/nomad-coin/rest"
@@ -15,7 +14,9 @@ func usage() {
 	fmt.Printf("Please use the following flags! \n\n")
 	fmt.Printf("-port:			Set the PORT of the server\n")
 	fmt.Printf("-mode:			Choose one among 'html', 'rest', 'all'\n\n")
-	runtime.Goexit()
+
+	// runtime.Goexit()
+	os.Exit(0)
 }
 
 func Start() {
