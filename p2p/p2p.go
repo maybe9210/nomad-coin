@@ -3,6 +3,7 @@ package p2p
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/websocket"
 	"github.com/maybe9210/nomad-coin/utils"
@@ -16,11 +17,13 @@ func Upgrade(rw http.ResponseWriter, r *http.Request) {
 	}
 	conn, err := upgrader.Upgrade(rw, r, nil)
 	utils.HandleErr(err)
-	initPeer(conn, "xx", "xx")
+	result := strings.Split(r.RemoteAddr, ":")
+	openPort := r.URL.Query().Get("openPort")
+	initPeer(conn, result[0], openPort)
 }
 
-func AddPeer(address, port string) {
-	conn, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s:%s/ws", address, port), nil)
+func AddPeer(address, port, openPort string) {
+	conn, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("ws://%s:%s/ws/openPort=%s", address, port, openPort), nil)
 	utils.HandleErr(err)
 	initPeer(conn, address, port)
 }
